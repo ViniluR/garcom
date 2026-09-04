@@ -1,0 +1,12 @@
+{
+  "name": "garcom-source",
+  "private": true,
+  "scripts": {
+    "dev": "cd garcom && npm run dev",
+    "build": "cd garcom && npm run build",
+    "start": "cd garcom && npm run start"
+  },
+  "dependencies": {
+    "next": "^15.4.4"
+  }
+}
