@@ -5,8 +5,9 @@ import { CardPedido } from "./CardPedido";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 
-export default function ClienteComanda() {
+function ClienteComandaContent() {
   const searchParams = useSearchParams();
   const mesa_id = searchParams?.get("mesa_id") ?? undefined;
 
@@ -117,5 +118,13 @@ function ClienteComandaVazia() {
       </main>
       <Footer />
     </>
+  );
+}
+
+export default function ClienteComanda() {
+  return (
+    <Suspense>
+      <ClienteComandaContent />
+    </Suspense>
   );
 }

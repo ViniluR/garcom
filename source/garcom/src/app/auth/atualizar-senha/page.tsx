@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
-import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -27,7 +27,7 @@ const schema = z
 
 type FormData = z.infer<typeof schema>;
 
-export default function NovaSenhaPage() {
+function NovaSenhaForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -208,5 +208,13 @@ export default function NovaSenhaPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function NovaSenhaPage() {
+  return (
+    <Suspense>
+      <NovaSenhaForm />
+    </Suspense>
   );
 }

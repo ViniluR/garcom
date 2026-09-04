@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 
-export default function EmailVerificationPage() {
+function EmailVerificationContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const [countdown, setCountdown] = useState(60);
@@ -113,5 +113,13 @@ export default function EmailVerificationPage() {
         <Toaster position="bottom-left" />
       </div>
     </div>
+  );
+}
+
+export default function EmailVerificationPage() {
+  return (
+    <Suspense>
+      <EmailVerificationContent />
+    </Suspense>
   );
 }

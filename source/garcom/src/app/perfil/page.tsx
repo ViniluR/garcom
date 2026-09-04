@@ -2,7 +2,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { IoQrCode } from "react-icons/io5";
-import { getDados } from "@/app/auth/getDados/page";
+import { getDados } from "@/lib/getDados";
 import { FormMesas } from "./components/FormMesas";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";

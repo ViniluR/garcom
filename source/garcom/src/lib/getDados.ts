@@ -1,6 +1,6 @@
-// lib/getDados.ts
-import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+
+import { auth } from "@/lib/auth";
 
 interface DadosUsuario {
   session: any;

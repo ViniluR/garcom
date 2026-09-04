@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDados } from "@/app/auth/getDados/page";
+import { getDados } from "@/lib/getDados";
 
 export async function GET() {
   const dados = await getDados();
