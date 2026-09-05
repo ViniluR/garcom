@@ -4,13 +4,35 @@ import { db } from "@/db";
 import { loadEmailTemplate, sendMail } from "@/lib/email";
 import * as schema from "@/db/schema";
 
+function getOrigin(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+
+  try {
+    return new URL(value).origin;
+  } catch {
+    return undefined;
+  }
+}
+
+function getVercelOrigin(value: string | undefined): string | undefined {
+  return getOrigin(value ? `https://${value}` : undefined);
+}
+
+const authBaseURL = getOrigin(process.env.BETTER_AUTH_URL);
+const emailBaseURL = getOrigin(process.env.BASE_URL) ?? authBaseURL;
+const trustedOrigins = [
+  authBaseURL,
+  getOrigin(process.env.BASE_URL),
+  getOrigin(process.env.NEXT_PUBLIC_BASE_URL),
+  getOrigin(process.env.NEXT_PUBLIC_APP_URL),
+  getVercelOrigin(process.env.VERCEL_PROJECT_PRODUCTION_URL),
+  getVercelOrigin(process.env.VERCEL_BRANCH_URL),
+  getVercelOrigin(process.env.VERCEL_URL),
+].filter((origin): origin is string => Boolean(origin));
+
 export const auth = betterAuth({
-  trustedOrigins: [
-    process.env.BETTER_AUTH_URL,
-    process.env.BASE_URL,
-    process.env.NEXT_PUBLIC_BASE_URL,
-    process.env.NEXT_PUBLIC_APP_URL,
-  ].filter((origin): origin is string => Boolean(origin)),
+  baseURL: authBaseURL,
+  trustedOrigins,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,
@@ -22,7 +44,7 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url, token }: any, _request: any) => {
       const updatedUrl = url.replace(
         process.env.BETTER_AUTH_URL,
-        process.env.BASE_URL,
+        emailBaseURL ?? "",
       );
       await sendMail({
         to: user.email,
@@ -37,7 +59,7 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url, token }: any, _request: any) => {
       const updatedUrl = url.replace(
         process.env.BETTER_AUTH_URL,
-        process.env.BASE_URL,
+        emailBaseURL ?? "",
       );
       await sendMail({
         to: user.email,

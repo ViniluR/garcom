@@ -4,6 +4,14 @@ import { pedido } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { mesa } from "@/db/schema/mesa";
 
+const pedidoStatuses = [
+  "aberto",
+  "em_preparacao",
+  "pronto",
+  "finalizado",
+] as const;
+type PedidoStatus = (typeof pedidoStatuses)[number];
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -25,7 +33,10 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     const mesa_id = searchParams.get("mesa_id");
-    const status = searchParams.get("status");
+    const statusParam = searchParams.get("status");
+    const status = pedidoStatuses.includes(statusParam as PedidoStatus)
+      ? (statusParam as PedidoStatus)
+      : null;
     let result;
 
     if (id) {
