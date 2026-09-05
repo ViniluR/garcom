@@ -99,6 +99,9 @@ export default function CadastroForm() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      termos: false,
+    },
   });
 
   const [mostrarSenha, setMostrarSenha] = useState(false);

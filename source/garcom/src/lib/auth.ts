@@ -5,6 +5,12 @@ import { loadEmailTemplate, sendMail } from "@/lib/email";
 import * as schema from "@/db/schema";
 
 export const auth = betterAuth({
+  trustedOrigins: [
+    process.env.BETTER_AUTH_URL,
+    process.env.BASE_URL,
+    process.env.NEXT_PUBLIC_BASE_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
+  ].filter((origin): origin is string => Boolean(origin)),
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,
