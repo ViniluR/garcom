@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "vercel-build": "npm run db:migrate && npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

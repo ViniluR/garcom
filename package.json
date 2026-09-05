@@ -1,7 +1,0 @@
-{
-  "name": "garcom-vercel",
-  "private": true,
-  "dependencies": {
-    "next": "^15.4.4"
-  }
-}

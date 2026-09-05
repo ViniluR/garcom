@@ -34,3 +34,33 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Deploy no Vercel
+
+Configure o projeto Vercel com `source/garcom` como **Root Directory**. O arquivo `vercel.json` dessa pasta instala as dependências com `npm ci`, aplica as migrations Drizzle e executa o build Next.js.
+
+### Variáveis de ambiente
+
+Cadastre no Vercel, para `Production`, `Preview` e `Development` quando necessário:
+
+- `DATABASE_URL`: URL do PostgreSQL acessível pelo Vercel, preferencialmente uma conexão pooled/serverless.
+- `BETTER_AUTH_SECRET`: segredo aleatório longo, diferente por ambiente.
+- `BETTER_AUTH_URL` e `BASE_URL`: URL pública do ambiente, sem `/` no final.
+- `BREVO_SMTP_HOST`, `BREVO_SMTP_PORT`, `BREVO_SMTP_USER`, `BREVO_SMTP_PASSWORD` e `BREVO_SMTP_SENDER`: credenciais SMTP usadas nos emails de autenticação.
+- `NEXT_PUBLIC_BASE_URL` e `NEXT_PUBLIC_APP_URL`: mesma URL pública, usada nos QR codes.
+
+Use [`.env.example`](.env.example) como modelo. Nunca versione `.env.local` ou credenciais reais.
+
+### Banco de dados
+
+Com uma `DATABASE_URL` local configurada, gere e aplique a migration inicial:
+
+```bash
+cp .env.example .env.local
+# edite .env.local
+npm ci
+npm run db:generate
+npm run db:migrate
+```
+
+Depois, versione a pasta `drizzle/` gerada. O deploy executa `npm run db:migrate` antes do build, então essa pasta precisa estar no repositório e `DATABASE_URL` precisa estar disponível nas configurações de build do Vercel.

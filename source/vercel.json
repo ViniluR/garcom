@@ -1,6 +1,0 @@
-{
-  "version": 2,
-  "framework": "nextjs",
-  "installCommand": "cd garcom && npm install",
-  "buildCommand": "cd garcom && npm run build"
-}
