@@ -63,4 +63,6 @@ npm run db:generate
 npm run db:migrate
 ```
 
-Depois, versione a pasta `drizzle/` gerada. O deploy executa `npm run db:migrate` antes do build, então essa pasta precisa estar no repositório e `DATABASE_URL` precisa estar disponível nas configurações de build do Vercel.
+Depois, versione a pasta `drizzle/` gerada. O deploy executa apenas o build da aplicação; migrations não devem rodar automaticamente durante o build do Vercel.
+
+Execute `npm run db:migrate` uma vez, manualmente, contra o banco de produção depois de confirmar que o schema atual está alinhado com a migration. Se o banco já tiver tabelas ou tipos criados, não remova dados: faça um backup e alinhe/baselineie o schema antes de aplicar a migration inicial.
