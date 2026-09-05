@@ -17,9 +17,13 @@ const buttonVariants = cva(
         amarelo:
           " inline-flex cursor-pointer items-center justify-center rounded-full  bg-[#FFC300] hover:bg-[#F0B800] text-white hover:text-[#FFF9E6] font-semibold font-poppins ",
         link: "text-[#F65C5C] text-primary underline-offset-4 hover:underline",
+        outline:
+          "border border-[#F65C5C] bg-white text-[#F65C5C] hover:bg-[#FFF1F1]",
       },
       size: {
         default: "h-[35px] w-fit pl-10 pr-10",
+        sm: "h-9 rounded-md px-3",
+        icon: "size-9",
       },
     },
     defaultVariants: {

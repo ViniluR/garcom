@@ -78,7 +78,7 @@ const schema = z
       .string()
       .min(8, { message: "A senha deve ter pelo menos 8 caracteres" }),
 
-    termos: z.literal(true, {
+    termos: z.boolean().refine((value) => value, {
       message: "Você deve aceitar os termos.",
     }),
   })
