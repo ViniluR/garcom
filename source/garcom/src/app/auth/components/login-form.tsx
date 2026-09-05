@@ -39,12 +39,14 @@ export default function LoginForm() {
 
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [redirecionando, setRedirecionando] = useState(false);
 
   const inputClass =
     "font-poppins rounded-full bg-[#EFEFEF] text-[1em] font-medium text-[#9E9E9E] placeholder:text-[#9E9E9E] placeholder:font-poppins placeholder:font-medium placeholder:text-[1em]";
 
 const onSubmit = async (data: FormData) => {
   setFormError(null);
+  setRedirecionando(true);
   try {
     const response = await authClient.signIn.email({
       email: data.email,
@@ -69,10 +71,12 @@ const onSubmit = async (data: FormData) => {
       } else if (code == "EMAIL_NOT_VERIFIED") {
         msg = "Por favor, verifique seu email para ativar sua conta.";
         toast.warning(msg);
+        setRedirecionando(false);
         return;
       } else if (code == "TOO_MANY_REQUESTS") {
         msg = "Muitas tentativas de login. Tente novamente mais tarde.";
         toast.error(msg);
+        setRedirecionando(false);
         return;
       }
       else {
@@ -82,11 +86,13 @@ const onSubmit = async (data: FormData) => {
         toast.error(msg);
       }
 
+      setRedirecionando(false);
       return;
     }
 
     router.push("/perfil");
   } catch (err: any) {
+    setRedirecionando(false);
     const msg =
       err instanceof Error
         ? err.message
@@ -95,6 +101,17 @@ const onSubmit = async (data: FormData) => {
     toast.error(msg);
   }
 };
+
+  if (redirecionando) {
+    return (
+      <div className="flex min-h-40 flex-col items-center justify-center gap-4">
+        <p className="font-poppins font-medium text-[#F65C5C]">Carregando seu perfil...</p>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[#FFE3CF]">
+          <div className="h-full w-1/2 animate-pulse rounded-full bg-[#F65C5C]" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

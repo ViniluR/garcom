@@ -91,7 +91,28 @@ export function EditarPerfilForm({ restauranteId, dadosIniciais }: Props) {
   const [fotoPerfil, setFotoPerfil] = useState<string | null>(dadosIniciais.fotoPerfil || null);
   const [fotoBanner, setFotoBanner] = useState<string | null>(dadosIniciais.fotoBanner || null);
 
-  const [horarios, setHorarios] = useState<Horario[]>([]);
+  function montarHorarios(data: any[]): Horario[] {
+    return diasSemana.map((dia) => {
+      const registros = data.filter(
+        (horario) => horario.dia_semana === diasSemanaMap[dia],
+      );
+      const encontrado = registros.find((horario) => horario.aberto) ?? registros[0];
+
+      return encontrado
+        ? {
+            id: encontrado.id,
+            dia,
+            inicio: encontrado.horario_inicio?.slice(0, 5) ?? "08:00",
+            fim: encontrado.horario_fim?.slice(0, 5) ?? "18:00",
+            aberto: Boolean(encontrado.aberto),
+          }
+        : { dia, inicio: "08:00", fim: "18:00", aberto: false };
+    });
+  }
+
+  const [horarios, setHorarios] = useState<Horario[]>(() =>
+    montarHorarios(dadosIniciais?.horarios ?? []),
+  );
   const [carregando, setCarregando] = useState(false);
 
   useEffect(() => {
@@ -103,20 +124,7 @@ export function EditarPerfilForm({ restauranteId, dadosIniciais }: Props) {
         if (res.ok) {
           data = await res.json();
         }
-        // Garante todos os dias, mapeando os campos do backend para o frontend
-        const horariosCompletos = diasSemana.map(dia => {
-          const encontrado = data.find((h: any) => h.dia_semana === diasSemanaMap[dia]);
-          return encontrado
-            ? {
-                id: encontrado.id,
-                dia: dia,
-                inicio: encontrado.horario_inicio,
-                fim: encontrado.horario_fim,
-                aberto: encontrado.aberto
-              }
-            : { dia, inicio: "08:00", fim: "18:00", aberto: false };
-        });
-        setHorarios(horariosCompletos);
+        setHorarios(montarHorarios(data));
       } catch (err) {
         setHorarios(diasSemana.map(dia => ({
           dia, inicio: "08:00", fim: "18:00", aberto: false
@@ -134,19 +142,7 @@ export function EditarPerfilForm({ restauranteId, dadosIniciais }: Props) {
       if (res.ok) {
         data = await res.json();
       }
-      const horariosCompletos = diasSemana.map(dia => {
-        const encontrado = data.find((h: any) => h.dia_semana === diasSemanaMap[dia]);
-        return encontrado
-          ? {
-              id: encontrado.id,
-              dia: dia,
-              inicio: encontrado.horario_inicio,
-              fim: encontrado.horario_fim,
-              aberto: encontrado.aberto
-            }
-          : { dia, inicio: "08:00", fim: "18:00", aberto: false };
-      });
-      setHorarios(horariosCompletos);
+      setHorarios(montarHorarios(data));
     } catch (err) {
       setHorarios(diasSemana.map(dia => ({
         dia, inicio: "08:00", fim: "18:00", aberto: false
@@ -355,6 +351,8 @@ export function EditarPerfilForm({ restauranteId, dadosIniciais }: Props) {
                         className={inputClass}
                         type="text"
                         placeholder="Digite"
+                        readOnly
+                        aria-readonly="true"
                         {...register("cnpj")}
                       />
                     </div>
