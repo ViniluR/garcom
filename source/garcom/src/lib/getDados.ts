@@ -19,13 +19,21 @@ export async function getDados(): Promise<DadosUsuario | null> {
   const headersList = await headers();
   const session = await auth.api.getSession({ headers: headersList });
 
-  const baseUrl = process.env.NEXT_PUBLIC_URL;
-  if (!session?.user?.id || !baseUrl) return null;
+  if (!session?.user?.id) return null;
+
+  const forwardedHost = headersList.get("x-forwarded-host");
+  const host = forwardedHost ?? headersList.get("host");
+  const forwardedProto = headersList.get("x-forwarded-proto");
+  const protocol = forwardedProto ?? (host?.startsWith("localhost") ? "http" : "https");
+  const baseUrl = `${protocol}://${host}`;
 
   try {
     const userRes = await fetch(`${baseUrl}/api/user?id=${session.user.id}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        cookie: headersList.get("cookie") ?? "",
+      },
       cache: "no-store",
     });
 

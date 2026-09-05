@@ -4,31 +4,18 @@ import { Button } from "@/components/ui/button";
 import { IoQrCode } from "react-icons/io5";
 import { getDados } from "@/lib/getDados";
 import { FormMesas } from "./components/FormMesas";
-import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const perfil = async () => {
 
   const dados = await getDados();
 
   if (!dados) {
-    return (
-      <Progress value={33} />
-    );
+    redirect("/auth/entrar");
   }
 
   const { role, roleData, user } = dados;
-
-  let debugHorariosApi = null;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  if (roleData?.id) {
-    try {
-      const horariosApi = await fetch(`${baseUrl}/api/horarioFuncionamento?restaurante_id=${roleData.id}`, { cache: "no-store" });
-      debugHorariosApi = horariosApi.ok ? await horariosApi.json() : [];
-    } catch (err) {
-      debugHorariosApi = { error: String(err) };
-    }
-  }
 
   const tituloClass = "text-[23px] font-bold mb-6 text-[#F65C5C]";
   const mainClass = "!pt-35 flex flex-col min-h-screen bg-white p-7 md:p-36 !pb-0";
@@ -83,8 +70,9 @@ const perfil = async () => {
 
   if (roleData?.id) {
     try {
-      const horariosApi = await fetch(`${baseUrl}/api/horarioFuncionamento?restaurante_id=${roleData.id}`, { cache: "no-store" });
-      const horariosData = horariosApi.ok ? await horariosApi.json() : [];
+      const horariosData = Array.isArray(roleData.horarios)
+        ? roleData.horarios
+        : [];
       if (!Array.isArray(horariosData) || horariosData.length === 0) {
         {roleData.endereco?.cidade || "sem endereço"};
       } else {
